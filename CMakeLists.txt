@@ -84,14 +84,6 @@ target_include_directories(performance_layers_support_lib INTERFACE
     third_party/farmhash/src
 )
 target_link_libraries(performance_layers_support_lib INTERFACE
-    absl::flat_hash_map
-    absl::flat_hash_set
-    absl::inlined_vector
-    absl::status
-    absl::statusor
-    absl::strings
-    absl::str_format
-    absl::synchronization
     farmhash
 )
 
