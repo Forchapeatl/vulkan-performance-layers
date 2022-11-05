@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-add_subdirectory(abseil-cpp)
 
 add_library(farmhash STATIC
 	farmhash/src/farmhash.cc
