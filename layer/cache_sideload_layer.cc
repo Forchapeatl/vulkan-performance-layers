@@ -42,17 +42,12 @@ class CacheSideloadLayerData : public LayerData {
   std::optional<InputBuffer> ReadImplicitCacheFile();
 
  private:
-  mutable absl::Mutex device_to_implicit_cache_handle_lock_;
-  absl::flat_hash_map<VkDevice, VkPipelineCache>
-      device_to_implicit_cache_handle_
-          ABSL_GUARDED_BY(device_to_implicit_cache_handle_lock_);
 
   const char* implicit_pipeline_cache_path_ = nullptr;
 };
 
 VkPipelineCache CacheSideloadLayerData::GetImplicitDeviceCache(
     VkDevice device) const {
-  absl::MutexLock lock(&device_to_implicit_cache_handle_lock_);
   if (auto it = device_to_implicit_cache_handle_.find(device);
       it != device_to_implicit_cache_handle_.end())
     return it->second;
@@ -61,27 +56,18 @@ VkPipelineCache CacheSideloadLayerData::GetImplicitDeviceCache(
 }
 
 void CacheSideloadLayerData::RemoveImplicitDeviceCache(VkDevice device) {
-  absl::MutexLock lock(&device_to_implicit_cache_handle_lock_);
   device_to_implicit_cache_handle_.erase(device);
 }
 
 VkPipelineCache CacheSideloadLayerData::CreateImplicitDeviceCache(
     VkDevice device, const VkAllocationCallbacks* alloc_callbacks,
     absl::Span<const uint8_t> initial_data) {
-  absl::MutexLock lock(&device_to_implicit_cache_handle_lock_);
-  assert(device_to_implicit_cache_handle_.count(device) == 0 &&
-         "Implicit cache already created for this device.");
 
   const size_t initial_data_size = initial_data.size();
   VkPipelineCacheCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
   create_info.initialDataSize = initial_data_size;
   create_info.pInitialData = initial_data.data();
-
-  const std::string path_info =
-      absl::StrCat("path: ", implicit_pipeline_cache_path_);
-  const std::string initial_size_info =
-      absl::StrCat("initial_data_size: ", initial_data_size);
 
   auto create_proc =
       GetNextDeviceProcAddr(device, &VkLayerDispatchTable::CreatePipelineCache);
