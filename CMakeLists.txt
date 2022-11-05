@@ -31,9 +31,6 @@ endif()
 
 set(FILESYSTEM_LIB_NAME stdc++fs)
 
-# Abseil requires PIC.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-
 # Add external dependencies.
 add_subdirectory(third_party)
 
