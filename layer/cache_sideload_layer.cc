@@ -36,9 +36,6 @@ class CacheSideloadLayerData : public LayerData {
 
   VkPipelineCache GetImplicitDeviceCache(VkDevice) const;
   void RemoveImplicitDeviceCache(VkDevice);
-  VkPipelineCache CreateImplicitDeviceCache(
-      VkDevice device, const VkAllocationCallbacks* alloc_callbacks,
-      absl::Span<const uint8_t> initial_data);
 
   std::optional<size_t> QueryPipelineCacheSize(VkDevice, VkPipelineCache cache);
 
